@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-""" 
+"""
 Part 1/3: Prepares Dataset
 Owner: Hinton, Ph.D Laboratory
 Version 1.0
@@ -9,7 +9,7 @@ This script cleans ANT/SNC task files and exports:
 2. A separate spreadsheet of participant-level error rates.
 
 Usage:
-    TBD
+    mkdir -p ant_snc_cleaned && python3 ant_snc/ant_snc_cleaner.py -i path/to/data -o ant_snc_cleaned --error-rate-file ant_snc_error_rates.xlsx
 """
 
 import os
@@ -50,11 +50,13 @@ COLUMN_ALIASES = {
     "congruent": "Congruency",
 }
 
+
 def normalize_text(value: object) -> str:
     """Normalize text values for safer matching."""
     if pd.isna(value):
         return ""
     return str(value).strip()
+
 
 def normalize_column_key(column_name: str) -> str:
     """Normalize a raw column name before checking aliases."""
@@ -63,6 +65,7 @@ def normalize_column_key(column_name: str) -> str:
     cleaned = cleaned.replace("-", " ")
     cleaned = re.sub(r"\s+", " ", cleaned)
     return cleaned
+
 
 def subject_id_from_path(filepath: str, input_dir: str) -> str:
     """
@@ -76,21 +79,23 @@ def subject_id_from_path(filepath: str, input_dir: str) -> str:
         folder_name = parts[0]
     else:
         folder_name = pathlib.Path(filepath).stem
-           
+
     digit_match = re.search(r"\d+", folder_name)
     if digit_match:
         return digit_match.group(0)
     return folder_name.strip().replace(" ", "_")
 
+
 def read_spreadsheet(filepath: str) -> pd.DataFrame:
     """Read a CSV or Excel file into a DataFrame."""
     suffix = pathlib.Path(filepath).suffix.lower()
-    
+
     if suffix == ".csv":
         return pd.read_csv(filepath)
     if suffix in {".xlsx", ".xls"}:
         return pd.read_excel(filepath)
     raise ValueError(f"Unsupported file type: {filepath}")
+
 
 def standardize_columns(df: pd.DataFrame) -> pd.DataFrame:
     """Rename known raw columns to the standard ANT/SNC column names."""
@@ -102,9 +107,11 @@ def standardize_columns(df: pd.DataFrame) -> pd.DataFrame:
             rename_map[column] = COLUMN_ALIASES[normalized]
     return df.rename(columns=rename_map)
 
+
 def has_required_columns(df: pd.DataFrame) -> bool:
     """Check whether a file contains the columns needed for ANT/SNC cleaning."""
     return all(column in df.columns for column in REQUIRED_COLS)
+
 
 def find_subject_files(input_dir: str) -> dict[str, list[str]]:
     """
@@ -127,6 +134,7 @@ def find_subject_files(input_dir: str) -> dict[str, list[str]]:
             groups.setdefault(subject_id, []).append(filepath)
     return groups
 
+
 def is_error_trial(value: object) -> bool:
     """
     Identify error trials from Attempt Outcome column.
@@ -137,6 +145,7 @@ def is_error_trial(value: object) -> bool:
     if normalized in {"incorrect", "error", "wrong", "false", "0", "no"}:
         return True
     return False
+
 
 def clean_subject(file_paths: list[str]) -> tuple[pd.DataFrame, dict]:
     """
@@ -168,7 +177,9 @@ def clean_subject(file_paths: list[str]) -> tuple[pd.DataFrame, dict]:
         source_files_used.append(filepath)
 
     if not readable_frames:
-        raise ValueError("No readable ANT/SNC files with the required columns were found.")
+        raise ValueError(
+            "No readable ANT/SNC files with the required columns were found."
+        )
 
     combined = pd.concat(readable_frames, ignore_index=True)
 
@@ -215,13 +226,12 @@ def clean_subject(file_paths: list[str]) -> tuple[pd.DataFrame, dict]:
         "error_rate": error_rate,
         "n_rows_exported": len(cleaned),
     }
-    
+
     return cleaned, cleaning_summary
 
+
 def main():
-    parser = argparse.ArgumentParser(
-        description="Clean extracted ANT/SNC task files."
-    )
+    parser = argparse.ArgumentParser(description="Clean extracted ANT/SNC task files.")
     parser.add_argument(
         "-i",
         "--input-dir",
@@ -247,7 +257,7 @@ def main():
 
     os.makedirs(output_dir, exist_ok=True)
     os.makedirs(os.path.dirname(error_rate_file), exist_ok=True)
-    
+
     print(f"[ant_snc_cleaner] Input folder: {input_dir}")
     print(f"[ant_snc_cleaner] Output folder: {output_dir}")
     print(f"[ant_snc_cleaner] Error rate file: {error_rate_file}")
@@ -287,7 +297,8 @@ def main():
                 "error_rate": summary["error_rate"],
                 "n_rows_exported": summary["n_rows_exported"],
                 "source_files": summary["source_files"],
-            })
+            }
+        )
 
         processed += 1
         print(f"[ant_snc_cleaner] Wrote {subject_id} -> {output_path}")
@@ -300,6 +311,7 @@ def main():
         f"Processed={processed}, Skipped={skipped}, "
         f"Error-rate rows={len(error_rate_rows)}"
     )
+
 
 if __name__ == "__main__":
     main()
