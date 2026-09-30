@@ -23,3 +23,11 @@ excluded_cleaning.txt
 
 
 
+
+# PyInstaller build outputs
+build/
+dist/
+*.spec
+
+# Generated exclusion logs
+excluded.txt
