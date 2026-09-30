@@ -10,7 +10,7 @@ participant-level RT summaries and ANT network scores.
 Expected input:
     Cleaned CSV files created by ant_snc_cleaner.py.
 
-Outputs:
+Output:
     One aggregated Excel file with participant-level metrics.
 
 Usage:

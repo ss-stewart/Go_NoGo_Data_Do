@@ -79,7 +79,6 @@ def run_cleaning(input_dir: str, cleaned_dir: str, error_rate_file: str) -> None
         f"Error-rate file={error_rate_file}"
     )
 
-
 def run_analysis(cleaned_dir: str, analysis_file: str) -> None:
     """Analyze cleaned ANT/SNC files and export participant metrics."""
     os.makedirs(os.path.dirname(analysis_file), exist_ok=True)
@@ -120,7 +119,6 @@ def run_analysis(cleaned_dir: str, analysis_file: str) -> None:
         f"Analyzed={len(rows)}, Skipped={skipped}, Output={analysis_file}"
     )
 
-
 def run_pipeline(input_dir: str, output_dir: str) -> None:
     """Run ANT/SNC cleaning and analysis."""
     input_dir = os.path.abspath(input_dir)
@@ -139,7 +137,6 @@ def run_pipeline(input_dir: str, output_dir: str) -> None:
     run_analysis(cleaned_dir, analysis_file)
 
     print("[pipeline] ANT/SNC pipeline complete.")
-
 
 def main() -> None:
     parser = argparse.ArgumentParser(
@@ -160,7 +157,6 @@ def main() -> None:
     args = parser.parse_args()
 
     run_pipeline(args.input_dir, args.output_dir)
-
 
 if __name__ == "__main__":
     main()
