@@ -4,7 +4,7 @@ __pycache__/
 *$py.class
 
 # Environments
-.venv
+.venv/
 venv/
 
 # VS Code settings
@@ -16,13 +16,12 @@ Thumbs.db
 
 # Data outputs (do not track output data)
 cleaned_data/
+ant_snc_cleaned/
+ant_snc_output/
+ant_snc_outputs/
 *.csv
 *.xlsx
 excluded_cleaning.txt
-
-
-
-
 
 # PyInstaller build outputs
 build/
