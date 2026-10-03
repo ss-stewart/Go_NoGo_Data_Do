@@ -33,13 +33,14 @@ def compute_metrics(df):
     """
     out = {}
     def tally(sub, sfx):
-        out[f'go_nogo_accuracy_{sfx}'] = int(sub['Correct'].sum())
+        denom = 320 if sfx == 't' else 160
+        out[f'go_nogo_accuracy_{sfx}'] = sub['Correct'].sum() / denom
         out[f'go_nogo_hits_{sfx}']     = int(sub[(sub['Answer']=='Go')   & (sub['Attempt']==1) & (sub['Correct']==1)].shape[0])
         out[f'go_nogo_omission_{sfx}'] = int(sub[(sub['Answer']=='Go')   & (sub['Attempt'].isna()) & (sub['Correct']==0)].shape[0])
         out[f'go_nogo_comission_{sfx}']= int(sub[(sub['Answer']=='No Go')& (sub['Attempt']==1) & (sub['Correct']==0)].shape[0])
         out[f'go_nogo_trueneg_{sfx}']  = int(sub[(sub['Answer']=='No Go')& (sub['Attempt'].isna()) & (sub['Correct']==1)].shape[0])
         out[f'go_nogo_120ms_{sfx}']    = int((sub['Reaction Time'] < 120).sum())
-        go_rt = sub[(sub['Answer']=='Go') & (sub['Correct']==1)]['Reaction Time'].dropna()
+        go_rt = sub[(sub['Correct']==1)]['Reaction Time'].dropna()
         out[f'go_nogo_RTmean_{sfx}']   = go_rt.mean()
         out[f'go_nogo_RTmed_{sfx}']    = go_rt.median()
         out[f'go_nogo_RTstdev_{sfx}']  = go_rt.std()
