@@ -11,6 +11,12 @@ def main():
     root = tk.Tk(); root.withdraw() 
     
     # 1) Select the top-level data folder of per-subject folders
+    messagebox.showinfo(
+        "Step 1: Select raw Go/No-Go data folder",
+        "Select the folder containing the data exports for all participants.\n\n"
+        "Note: this program assumes that the files exported from RedCAP have been unzipped.",
+    )
+    
     root_dir = filedialog.askdirectory(title="Select folder containing Gorilla data exports (unzipped)")
     if not root_dir:
         messagebox.showinfo("Cancelled", "No folder selected.")
@@ -30,6 +36,12 @@ def main():
         return
         
     # 3) Choose where to save clean CSVs
+    messagebox.showinfo(
+        "Step 2: Select cleaned CSV output folder",
+        "Choose the folder where the cleaned CSV files (per participant) will be saved.\n\n"
+        "Recommended: use a separate folder such as cleaned_data or go_nogo_cleaned.",
+    )
+    
     clean_dir = filedialog.askdirectory(
         title="Select folder for cleaned CSVs"
     )
@@ -63,6 +75,11 @@ def main():
             excluded.append(sid)
             
     # 5) Choose destination filename for aggregated metrics (spreadsheet)
+    messagebox.showinfo(
+        "Step 3: Save aggregated results",
+        "Name and choose where to save the final aggregated Excel spreadsheet.",
+    )
+    
     agg_fp = filedialog.asksaveasfilename(
         title="Save aggregated",
         defaultextension=".xlsx",
